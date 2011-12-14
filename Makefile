@@ -1,11 +1,11 @@
 CC=gcc
-PARM= -Wall -pedantic
+PARM= -Wall -pedantic -l pcap -g
 OUT_BIN=main
 
 default:	clean build
 
-build: main.c
-	$(CC) $(PARM) main.c -o main
+build: main.c constants.h
+	$(CC) $(PARM) *.h *.c -o main
 
 clean:
 	rm -rf main *.o
