@@ -7,8 +7,17 @@
 pcap_t * descr;  /* descriptor used by pcap_loop */
 
 int main(int argc,char** argv){
+	if (argc < 2) {
+		printf("Nezadan nazev karty.\n");
+		return 1;
+	}
 	char iface[20];  /* name of the monitored interface*/
-   char errbuf[PCAP_ERRBUF_SIZE];  /* if failed, contains the error text */
+	memset(iface, 0, sizeof(iface));  /* iface cleared */
+	int i;
+	for(i=0;(i<strlen(argv[1])) && (i<sizeof(iface));i++){
+		iface[i] = argv[1][i];
+	}
+   	char errbuf[PCAP_ERRBUF_SIZE];  /* if failed, contains the error text */
 	memset(errbuf, 0, PCAP_ERRBUF_SIZE);  /* errbuf initialized */
 	int ii;
 
