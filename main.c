@@ -96,7 +96,11 @@ void processPacket(u_char *arg, const struct pcap_pkthdr* hdr, const u_char* pac
 
   if (ntohs (eth_header->ether_type) == ETHERTYPE_ARP)  /* if it is an ARP packet */
     {
-      printf ("Source: %d.%d.%d.%d\t\tDestination: %d.%d.%d.%d\n",
+		struct arphdr arph=arp_packet->ea_hdr;
+		int type;
+		type=arph.ar_op;
+		printf ("TYPE %d ",type);
+     	printf ("Source: %d.%d.%d.%d\t\tDestination: %d.%d.%d.%d\n",
         arp_packet->arp_spa[0],
         arp_packet->arp_spa[1],
         arp_packet->arp_spa[2],
