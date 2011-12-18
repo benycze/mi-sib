@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include "constants.h"
+#include <net/if.h>
+#include <netinet/if_ether.h>
 
 pcap_t * descr;  /* descriptor used by pcap_loop */
 
@@ -57,5 +59,24 @@ int main(int argc,char** argv){
 
 /*	processPacket implementation */
 void processPacket(u_char *arg, const struct pcap_pkthdr* hdr, const u_char* packet){
+	printf("PAKETTEST\n");
+  struct ether_header *eth_header;  /* in ethernet.h included by if_eth.h */
+  struct ether_arp *arp_packet; /* from if_eth.h */
 
+  eth_header = (struct ether_header *) packet;
+  // 14 je velikost hlavicky
+  arp_packet = (struct ether_arp *) (packet + 14);
+
+  if (ntohs (eth_header->ether_type) == ETHERTYPE_ARP)  /* if it is an ARP packet */
+    {
+      printf ("Source: %d.%d.%d.%d\t\tDestination: %d.%d.%d.%d\n",
+        arp_packet->arp_spa[0],
+        arp_packet->arp_spa[1],
+        arp_packet->arp_spa[2],
+        arp_packet->arp_spa[3],
+        arp_packet->arp_tpa[0],
+        arp_packet->arp_tpa[1],
+        arp_packet->arp_tpa[2],
+        arp_packet->arp_tpa[3]);
+    }
 }
