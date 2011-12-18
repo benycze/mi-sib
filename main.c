@@ -6,6 +6,9 @@
 
 pcap_t * descr;  /* descriptor used by pcap_loop */
 
+/* Packet processing */
+void processPacket(u_char *arg, const struct pcap_pkthdr* hdr, const u_char* packet);
+
 int main(int argc,char** argv){
 	if (argc < 2) {
 		printf("Nezadan nazev karty.\n");
@@ -40,11 +43,19 @@ int main(int argc,char** argv){
        pcap_datalink_val_to_description(dlt_buf[ii]));
    }
 	
-	
-   /* Close the descriptor of the opened device */
+  	/*	Start infinite packet processing loop - change NULL 
+	to u_char* variable with your ouwn parameter*/
+	pcap_loop(descr, -1, processPacket, NULL); 	
+   
+	/* Close the descriptor of the opened device */
 	pcap_close(descr);
 	/* free buffers */
 	free(dlt_buf);
 	
 	return 0;
+}
+
+/*	processPacket implementation */
+void processPacket(u_char *arg, const struct pcap_pkthdr* hdr, const u_char* packet){
+
 }
