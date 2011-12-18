@@ -11,6 +11,11 @@ int main(int argc,char** argv){
 		printf("Nezadan nazev karty.\n");
 		return 1;
 	}
+
+	if (geteuid() != 0 ) {
+		printf("Pro spusteni aplikace musite byt root (EUID == 0)\n");
+		return 2;
+	}
 	char iface[20];  /* name of the monitored interface*/
 	memset(iface, 0, sizeof(iface));  /* iface cleared */
 	int i;
