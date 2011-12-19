@@ -137,7 +137,7 @@ void processPacket(u_char *arg, const struct pcap_pkthdr* hdr, const u_char* pac
 				}
 				next = next->next;
 			}
-			printf("POCET %d\n", pocet);
+			//printf("POCET %d\n", pocet);
 			next = (zaznam*)malloc(sizeof(zaznam));
 			time(&next->cas);
 			//zkopcime informace z paketu
