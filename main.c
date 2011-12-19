@@ -5,6 +5,21 @@
 #include "constants.h"
 #include <net/if.h>
 #include <netinet/if_ether.h>
+#include <time.h>
+#include <unistd.h>
+#include <arpa/inet.h>
+
+struct zaznam_s
+{
+    	struct zaznam_s* next;
+		time_t cas;
+		u_int8_t arp_sha[ETH_ALEN];	/* sender hardware address */
+		u_int8_t arp_spa[4];		/* sender protocol address */
+		u_int8_t arp_tha[ETH_ALEN];	/* target hardware address */
+		u_int8_t arp_tpa[4];
+} zaznam_s;
+
+typedef struct zaznam_s zaznam;
 
 pcap_t * descr;  /* descriptor used by pcap_loop */
 struct bpf_program fp;  /* compiled BPF filter */
@@ -12,10 +27,13 @@ char* filter = PACKET_FILTER; /* human readable filter */
 bpf_u_int32 mask;	/* subnet mask of interface */
 bpf_u_int32 net;		/* The IP of our sniffing device */
 
+zaznam* listHead;
+
 /* Packet processing */
 void processPacket(u_char *arg, const struct pcap_pkthdr* hdr, const u_char* packet);
 
 int main(int argc,char** argv){
+	listHead=NULL;
 	if (argc < 2) {
 		printf("Nezadan nazev karty.\n");
 		return 1;
@@ -74,7 +92,7 @@ int main(int argc,char** argv){
 
   	/*	Start infinite packet processing loop - change NULL 
 	to u_char* variable with your ouwn parameter*/
-	pcap_loop(descr, -1, processPacket, NULL); 	
+	pcap_loop(descr, -1, processPacket, (u_char *)listHead); 	
    
 	/* Close the descriptor of the opened device */
 	pcap_close(descr);
@@ -109,5 +127,48 @@ void processPacket(u_char *arg, const struct pcap_pkthdr* hdr, const u_char* pac
         arp_packet->arp_tpa[1],
         arp_packet->arp_tpa[2],
         arp_packet->arp_tpa[3]);
+
+		if (type&256) {
+			//request
+			zaznam* next=listHead;
+			time_t aktualnicas=time(NULL);
+			int pocet=0;
+			while (next) {
+				pocet++;
+				//kontrola na stáří
+				if ((aktualnicas-15) > (next->cas)) {
+					zaznam* prev=next;
+					while (next) {
+						next=next->next;
+						free(next);
+					}
+					prev->next=NULL;
+					break;
+				}
+				next=next->next;
+			}
+			printf("POCET %d\n",pocet);
+			next=(zaznam *) malloc(sizeof(zaznam));
+			time(&next->cas);
+			//zkopcime informace z paketu
+			int i;
+			for (i=0;i<ETH_ALEN;i++) {
+				next->arp_sha[i]=arp_packet->arp_sha[i];
+			}
+			for (i=0;i<ETH_ALEN;i++) {
+				next->arp_tha[i]=arp_packet->arp_tha[i];
+			}
+			for (i=0;i<4;i++) {
+				next->arp_spa[i]=arp_packet->arp_spa[i];
+			}
+			for (i=0;i<4;i++) {
+				next->arp_tpa[i]=arp_packet->arp_tpa[i];
+			}
+			next->next=listHead;
+			listHead=next;
+
+		} else if (type&512) {
+			//reply
+		}
     }
 }

@@ -1,5 +1,5 @@
 CC=gcc
-PARM= -Wall -pedantic -l pcap -g
+PARM=-Wall -l pcap -g
 OUT_BIN=main
 
 default:	clean build
