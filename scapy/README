@@ -1,0 +1,31 @@
+#########################################
+arp_detect.py
+-program detekuje, jestli nedoslo ke zmene MAC adresy na stroji, ktery by mel byti obeti.
+-spousti se takto : arp_detect.py IP_ADRESA MAC_ADRESA 
+-zadane hodnoty jsou brany jako referencni a samotna analyza probiha ve scapy pomoci funkce sniff(knihovna je importovana v pythonu)
+-jakmile se nebude rovnat MAC svazana s IP a bude se jednat o op="is-at", tak dojde k nahlaseni
+-ukazka vystupu:
+*********************
+ My MAC is spoofed!!!
+**********************
+#########################################
+dns_flood_detect.py
+-program pro detekci, ktery pouziva metriku poctu dotazu za sekudnu
+-analyza se provadi pomoci scapy, odfiltruji se UDP pakety, a pote se cita dle pritomnosti dstport=53
+-spusti se jako: dns_flood_detect.py treshold
+-ukazka vystupu
+*********************
+ DNS requests are above the treshold!!! Actual is 14
+**********************
+##########################################
+syn_flood_detect.py
+-jedna se o modifikaci dns_flood_detect.py
+-ukazka vystupu
+*********************
+ SYN requests are above the treshold!!! Actual is 14
+**********************
+##########################################
+SCAP_GEN.sh
+-zde je ukazka generovani paketu ve scapy
+-jsou zakomentovany jednotlive akce na posilani (pro aktivaci odkomentovat;posilaji se v loopu, tak na dalsi nedojde)
+-ve vrchni casti je mozne udelat nejake nastaveni

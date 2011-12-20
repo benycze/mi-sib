@@ -1,1 +1,21 @@
-MI-SIB project with libpcap. Semestral project.
+-Program napsany pomoci libpcap
+-Provadi analyzu vsech prichozich ARP paketu
+-Pouziva vestaveny filtr pro jejich rychlejsi detekci
+-Behem provozu si zaznamenava pozadavky a odpovedi, udrzuje si urcite casove okno prekladu
+pokud dojde ke spoofu, tak to da najevo priblizne takto
+
+SrcHW: 00:00:00:00:00:be		DstHW: 00:00:00:00:00:00		Podvrzeny PAKET !!!
+TYPE 512 Source: 192.168.1.1		Destination: 192.168.1.13
+
+-----------------------------------------------------------------------------------------
+Kompilace:
+gcc version 4.4.5 (Ubuntu/Linaro 4.4.4-14ubuntu5)
+OS: Linux ubuntu 10.10 Maverick; Debian Lenny
+
+kompiluje se pomoci prikazu :
+	make
+
+spusteni napr:
+	sudo main eth0
+
+Potrebuje prava superuzivatele, kdyz je nema, ozve se.
